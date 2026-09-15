@@ -41,7 +41,7 @@ def reassembly(results, results3, fps):
 
     return results3
 
-def jonnysmagic(df):
+def timegroup(df):
     
     test = df.loc[:,'Time'].reset_index()    
     test['Time_before'] = test["Time"].shift(1)
@@ -62,7 +62,7 @@ def fivefps(dfs, fps):
     for df in dfs:
         results = pd.DataFrame() 
         results2 = pd.DataFrame()  
-        test = jonnysmagic(df)
+        test = timegroup(df)
         for i in range(1,test['Change'].max()+1):
             chunk = df[test['Change'] == i].head(5)
             results = pd.concat([results, chunk])
@@ -87,7 +87,7 @@ def mixedfps(dfs, fps):
             results3 = pd.DataFrame()
             results4 = pd.DataFrame() 
             if df.Seconds.diff().mean() < 0.8:
-                test = jonnysmagic(df)
+                test = timegroup(df)
                 new_df = df[df.index.isin(test.groupby(['Change'])['index'].min().values)] 
                 new_df = reassembly(new_df, results3, fps)
                 adj_dfs = pd.concat([adj_dfs, new_df], axis = 1).reset_index(drop=True)
